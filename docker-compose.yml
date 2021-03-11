@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  whoami:
+    image: containous/whoami:v1.3.0
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == amrc-factoryP-2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.whoami.rule=(Host(`amrc-factoryplus.***REMOVED***`) && Path(`/whoami`))"
+        - "traefik.docker.network=factory-plus"
+        - "traefik.http.services.whoami.loadbalancer.server.port=80"
+        - "traefik.http.routers.whoami.tls=true"
+    networks:
+      - factory-plus
+networks:
+  factory-plus:
+    external: true
+    name: factory-plus
